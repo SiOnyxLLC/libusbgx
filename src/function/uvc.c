@@ -1032,14 +1032,12 @@ static int uvc_set_frame(char *format_path, const char *format, const struct usb
 		return USBG_ERROR_PATH_TOO_LONG;
 
 	ret = uvc_create_dir(full_frame_path);
-	if (ret != USBG_SUCCESS)buffer_size =
+	if (ret != USBG_SUCCESS)
 		return ret;
 
 	ret = usbg_write_dec(frame_path, frame_name, "dwFrameInterval", attrs->dwFrameInterval);
 	if (ret != USBG_SUCCESS)
 		return ret;
-
-	if (attrs->dwDefaultFrameInterval != 0) {
 
 	ret = usbg_write_dec(frame_path, frame_name, "dwMaxVideoFrameBufferSize", buffer_size);
 	if (ret != USBG_SUCCESS)
