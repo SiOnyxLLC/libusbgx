@@ -1006,9 +1006,19 @@ out:
 
 #endif
 
-static int uvc_set_format(char *format_path, const char *format, const struct usbg_f_uvc_format_attrs *attrs)
+static int uvc_set_format(char *streaming_path, const char *format, const struct usbg_f_uvc_format_attrs *attrs)
 {
-	int ret = 0;
+	int   ret                               = 0;
+	int   nmb                               = 0;
+	char  format_path[USBG_MAX_PATH_LENGTH] = "";
+
+	nmb = snprintf(format_path, sizeof(format_path), "%s/%s", streaming_path, format);
+	if (nmb >= sizeof(format_path))
+		return USBG_ERROR_PATH_TOO_LONG;
+
+	ret = uvc_create_dir(format_path);
+	if (ret != USBG_SUCCESS)
+		return ret;
 
 	if (attrs->guidFormat != NULL) {
 		ret = usbg_write_string(format_path, format, "guidFormat", attrs->guidFormat);
