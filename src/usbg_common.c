@@ -176,12 +176,17 @@ int usbg_write_buf(const char *path, const char *name,
 			nmb = USBG_ERROR_IO;
 	}
 
-	ret = fclose(fp);
-	fprintf(stderr, "CHUCK -->>> Open=%s buf=%s len=%d nmb=%d fp=%p ret=%d\n\n", p, buf, len, nmb, fp, ret);
-	if (ret < 0)
-		ret = usbg_translate_error(errno);
-	else
-		ret = nmb;
+	{
+		int err = 0;
+		ret = fclose(fp);
+		if (ret < 0) {
+			err = errno;
+			ret = usbg_translate_error(err);
+		}
+		else
+			ret = nmb;
+		fprintf(stderr, "CHUCK -->>> Open=%s buf=%s len=%d nmb=%d fp=%p ret=%d err=%d\n\n", p, buf, len, nmb, fp, ret, err);
+	}
 out:
 	return ret;
 }
