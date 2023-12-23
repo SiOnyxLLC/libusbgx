@@ -1010,17 +1010,18 @@ static int uvc_set_format(char *format_path, const char *format, const struct us
 {
 	int ret = 0;
 
+	if (attrs->guidFormat != NULL) {
+		ret = usbg_write_string(format_path, format, "guidFormat", attrs->guidFormat);
+		if (ret != USBG_SUCCESS)
+			return ret;
+	}
+
 	if (attrs->bBitsPerPixel != 0) {
 		ret = usbg_write_dec(format_path, format, "bBitsPerPixel", attrs->bBitsPerPixel);
 		if (ret != USBG_SUCCESS)
 			return ret;
 	}
 
-	if (attrs->guidFormat != NULL) {
-		ret = usbg_write_string(format_path, format, "guidFormat", attrs->guidFormat);
-		if (ret != USBG_SUCCESS)
-			return ret;
-	}
 	return usbg_write_dec(format_path, format, "bDefaultFrameIndex", attrs->bDefaultFrameIndex);
 }
 
@@ -1073,17 +1074,17 @@ static int uvc_set_streaming(char *func_path, const char *format, const struct u
 	if (nmb >= sizeof(streaming_path))
 		return USBG_ERROR_PATH_TOO_LONG;
 
+	ret = uvc_set_format(streaming_path, format, attrs);
+	if(ret != USBG_SUCCESS)
+		ERROR("Error: uvc_set_format(): %d", ret);
+
 	for(frame_attrs = attrs->frames, i = 0; frame_attrs[i]; ++i) {
 		if (frame_attrs[i]) {
 			ret = uvc_set_frame(streaming_path, format, frame_attrs[i]);
 			if(ret != USBG_SUCCESS)
-				ERROR("Error: %d", ret);
+				ERROR("Error: uvc_set_frame(): %d", ret);
 		}
 	}
-
-	ret = uvc_set_format(streaming_path, format, attrs);
-	if(ret != USBG_SUCCESS)
-		ERROR("Error: %d", ret);
 
 	return ret;
 }
