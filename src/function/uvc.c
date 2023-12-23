@@ -1017,22 +1017,27 @@ static int uvc_set_format(char *streaming_path, const char *format, const struct
 		return USBG_ERROR_PATH_TOO_LONG;
 
 	ret = uvc_create_dir(format_path);
+	ERROR("Creating dir '%s' ret=%d", format_path, ret);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
 	if (attrs->guidFormat != NULL) {
 		ret = usbg_write_string(format_path, format, "guidFormat", attrs->guidFormat);
+	ERROR("Setting guid '%s' ret=%d", attrs->guidFormat, ret);
 		if (ret != USBG_SUCCESS)
 			return ret;
 	}
 
 	if (attrs->bBitsPerPixel != 0) {
 		ret = usbg_write_dec(format_path, format, "bBitsPerPixel", attrs->bBitsPerPixel);
+	ERROR("Setting bBitsPerPixel '%d' ret=%d", attrs->bBitsPerPixel, ret);
 		if (ret != USBG_SUCCESS)
 			return ret;
 	}
 
-	return usbg_write_dec(format_path, format, "bDefaultFrameIndex", attrs->bDefaultFrameIndex);
+	ret = usbg_write_dec(format_path, format, "bDefaultFrameIndex", attrs->bDefaultFrameIndex)
+	ERROR("Setting bDefaultFrameIndex '%d' ret=%d", attrs->bDefaultFrameIndex, ret);
+	return ret;
 }
 
 static int uvc_set_frame(char *format_path, const char *format, const struct usbg_f_uvc_frame_attrs *attrs)
