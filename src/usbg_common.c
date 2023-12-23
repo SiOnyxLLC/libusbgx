@@ -160,7 +160,7 @@ int usbg_write_buf(const char *path, const char *name,
 	}
 
 	fp = fopen(p, "w");
-	fprintf(stderr, "CHUCK -->>> Open=%s buf=%s len=%d fp=%p errno=%d\n", p, buf, len, fp, errno);
+	fprintf(stderr, "CHUCK -->>> Open=%s buf=%s len=%d fp=%p\n", p, buf, len, fp);
 	if (!fp) {
 		/* Set error correctly */
 		ret = usbg_translate_error(errno);
@@ -168,7 +168,7 @@ int usbg_write_buf(const char *path, const char *name,
 	}
 
 	nmb = fwrite(buf, sizeof(char), len, fp);
-	fprintf(stderr, "CHUCK -->>> Open=%s buf=%s len=%d nmb=%d fp=%p errno=%d\n", p, buf, len, nmb, fp, errno);
+	fprintf(stderr, "CHUCK -->>> Open=%s buf=%s len=%d nmb=%d fp=%p\n", p, buf, len, nmb, fp);
 	if (nmb < len) {
 		if (ferror(fp))
 			nmb = usbg_translate_error(errno);
@@ -177,7 +177,7 @@ int usbg_write_buf(const char *path, const char *name,
 	}
 
 	ret = fclose(fp);
-	fprintf(stderr, "CHUCK -->>> Open=%s buf=%s len=%d nmb=%d fp=%p errno=%d\n\n", p, buf, len, nmb, fp, errno);
+	fprintf(stderr, "CHUCK -->>> Open=%s buf=%s len=%d nmb=%d fp=%p ret=%d\n\n", p, buf, len, nmb, fp, ret);
 	if (ret < 0)
 		ret = usbg_translate_error(errno);
 	else
