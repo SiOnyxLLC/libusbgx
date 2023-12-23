@@ -1008,6 +1008,17 @@ out:
 
 static int uvc_set_format(char *format_path, const char *format, const struct usbg_f_uvc_format_attrs *attrs)
 {
+	if (attrs->bBitsPerPixel != 0) {
+		ret = usbg_write_dec(format_path, format, "bBitsPerPixel", attrs->bBitsPerPixel);
+		if (ret != USBG_SUCCESS)
+			return ret;
+	}
+
+	if (attrs->guidFormat != NULL) {
+		ret = usbg_write_string(format_path, format, "guidFormat", attrs->guidFormat);
+		if (ret != USBG_SUCCESS)
+			return ret;
+	}
 	return usbg_write_dec(format_path, format, "bDefaultFrameIndex", attrs->bDefaultFrameIndex);
 }
 

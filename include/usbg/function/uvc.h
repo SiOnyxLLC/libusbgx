@@ -52,8 +52,8 @@ struct usbg_f_uvc_format_attrs
 	int bDefaultFrameIndex;
 	int bmaControls;
 	int bmInterfaceFlags;
-	const char *format;
 	const char * guidFormat;
+	const char *format;
 	struct usbg_f_uvc_frame_attrs **frames;
 };
 
