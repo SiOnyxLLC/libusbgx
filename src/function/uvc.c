@@ -1022,28 +1022,28 @@ static int uvc_set_format(char *streaming_path, const char *format, const struct
 		return ret;
 
 	if (attrs->guidFormat != NULL) {
-		ret = usbg_write_string(format_path, format, "guidFormat", attrs->guidFormat);
+		ret = usbg_write_string(streaming_path, format, "guidFormat", attrs->guidFormat);
 	ERROR("Setting guid '%s' ret=%d", attrs->guidFormat, ret);
 		if (ret != USBG_SUCCESS)
 			return ret;
 	}
 
 	if (attrs->bBitsPerPixel != 0) {
-		ret = usbg_write_dec(format_path, format, "bBitsPerPixel", attrs->bBitsPerPixel);
+		ret = usbg_write_dec(streaming_path, format, "bBitsPerPixel", attrs->bBitsPerPixel);
 	ERROR("Setting bBitsPerPixel '%d' ret=%d", attrs->bBitsPerPixel, ret);
 		if (ret != USBG_SUCCESS)
 			return ret;
 	}
 
-	ret = usbg_write_dec(format_path, format, "bDefaultFrameIndex", attrs->bDefaultFrameIndex);
+	ret = usbg_write_dec(streaming_path, format, "bDefaultFrameIndex", attrs->bDefaultFrameIndex);
 	ERROR("Setting bDefaultFrameIndex '%d' ret=%d", attrs->bDefaultFrameIndex, ret);
 	return ret;
 }
 
-static int uvc_set_frame(char *format_path, const char *format, const struct usbg_f_uvc_frame_attrs *attrs)
+static int uvc_set_frame(char *streaming_path, const char *format, const struct usbg_f_uvc_frame_attrs *attrs)
 {
+	char format_path[USBG_MAX_PATH_LENGTH];
 	char frame_path[USBG_MAX_PATH_LENGTH];
-	char full_frame_path[USBG_MAX_PATH_LENGTH];
 	char frame_name[32];
 	int nmb, ret;
 	int buffer_size = ((attrs->dwDefaultFrameInterval != 0) ? attrs->dwDefaultFrameInterval : (attrs->wHeight * attrs->wWidth));
@@ -1052,31 +1052,31 @@ static int uvc_set_frame(char *format_path, const char *format, const struct usb
 	if (nmb >= sizeof(frame_name))
 		return USBG_ERROR_PATH_TOO_LONG;
 
-	nmb = snprintf(frame_path, sizeof(frame_path), "%s/%s", format_path, format);
+	nmb = snprintf(format_path, sizeof(format_path), "%s/%s", streaming_path, format);
+	if (nmb >= sizeof(format_path))
+		return USBG_ERROR_PATH_TOO_LONG;
+
+	nmb = snprintf(frame_path, sizeof(frame_path), "%s/%s", format_path, frame_name);
 	if (nmb >= sizeof(frame_path))
 		return USBG_ERROR_PATH_TOO_LONG;
 
-	nmb = snprintf(full_frame_path, sizeof(frame_path), "%s/%s", frame_path, frame_name);
-	if (nmb >= sizeof(full_frame_path))
-		return USBG_ERROR_PATH_TOO_LONG;
-
-	ret = uvc_create_dir(full_frame_path);
+	ret = uvc_create_dir(frame_path);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	ret = usbg_write_dec(frame_path, frame_name, "dwFrameInterval", attrs->dwFrameInterval);
+	ret = usbg_write_dec(format_path, frame_name, "dwFrameInterval", attrs->dwFrameInterval);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	ret = usbg_write_dec(frame_path, frame_name, "dwMaxVideoFrameBufferSize", buffer_size);
+	ret = usbg_write_dec(format_path, frame_name, "dwMaxVideoFrameBufferSize", buffer_size);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	ret = usbg_write_dec(frame_path, frame_name, "wHeight", attrs->wHeight);
+	ret = usbg_write_dec(format_path, frame_name, "wHeight", attrs->wHeight);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	return usbg_write_dec(frame_path, frame_name, "wWidth", attrs->wWidth);
+	return usbg_write_dec(format_path, frame_name, "wWidth", attrs->wWidth);
 }
 
 static int uvc_set_streaming(char *func_path, const char *format, const struct usbg_f_uvc_format_attrs *attrs)

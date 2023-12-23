@@ -159,7 +159,6 @@ int usbg_write_buf(const char *path, const char *name,
 		goto out;
 	}
 
-fprintf(stderr, "CHUCK ----> path=%s value=%s len=%d", p, buf, len);
 	fp = fopen(p, "w");
 	if (!fp) {
 		/* Set error correctly */
@@ -168,7 +167,6 @@ fprintf(stderr, "CHUCK ----> path=%s value=%s len=%d", p, buf, len);
 	}
 
 	nmb = fwrite(buf, sizeof(char), len, fp);
-fprintf(stderr, "CHUCK ----> path=%s value=%s len=%d nmb=%d", p, buf, len, nmb);
 	if (nmb < len) {
 		if (ferror(fp))
 			nmb = usbg_translate_error(errno);
