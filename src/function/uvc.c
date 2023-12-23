@@ -1010,7 +1010,7 @@ static int uvc_set_format(char *format_path, const char *format, const struct us
 {
 	int ret = 0;
 
-	if (attrs->guidFormat[0] != '\0') {
+	if (attrs->guidFormat != NULL) {
 		ret = usbg_write_string(format_path, format, "guidFormat", attrs->guidFormat);
 		if (ret != USBG_SUCCESS)
 			return ret;
