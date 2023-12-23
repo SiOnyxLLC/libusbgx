@@ -98,6 +98,18 @@ struct {
 		.export = usbg_set_config_node_int,		        \
 	}
 
+#undef UVC_STRING_ATTR
+
+#define UVC_STRING_ATTR(_name)					\
+	{								\
+		.name = #_name,						\
+		.offset = offsetof(struct usbg_f_uvc_format_attrs, _name),     \
+		.get = usbg_get_string,				        \
+		.set = usbg_set_string,				        \
+		.export = usbg_set_config_node_string,		        \
+		.import = usbg_get_config_node_string,	                \
+	}
+
 struct {
 	const char *name;
 	size_t offset;
@@ -152,6 +164,8 @@ struct {
 	[USBG_F_UVC_FORMAT_ASPECTRATIO_X] = UVC_DEC_ATTR_RO(bAspectRatioX),
 	[USBG_F_UVC_FORMAT_ASPECTRATIO_Y] = UVC_DEC_ATTR_RO(bAspectRatioY),
 	[USBG_F_UVC_FORMAT_DEFAULT_FRAME_INDEX] = UVC_DEC_ATTR(bDefaultFrameIndex),
+	[USBG_F_UVC_FORMAT_GUID_FORMAT] = UVC_STRING_ATTR(guidFormat),
+	[USBG_F_UVC_FORMAT_BITS_PER_PIXEL] = UVC_DEC_ATTR(bBitsPerPixel),
 	[USBG_F_UVC_FORMAT_FORMAT_INDEX] = UVC_DEC_ATTR_RO(bFormatIndex),
 };
 
@@ -1003,6 +1017,7 @@ static int uvc_set_frame(char *format_path, const char *format, const struct usb
 	char full_frame_path[USBG_MAX_PATH_LENGTH];
 	char frame_name[32];
 	int nmb, ret;
+	int buffer_size = ((attrs->dwDefaultFrameInterval != 0) ? attrs->dwDefaultFrameInterval : (attrs->wHeight * attrs->wWidth));
 
 	nmb = snprintf(frame_name, sizeof(frame_name), "frame.%d", attrs->bFrameIndex);
 	if (nmb >= sizeof(frame_name))
@@ -1017,14 +1032,16 @@ static int uvc_set_frame(char *format_path, const char *format, const struct usb
 		return USBG_ERROR_PATH_TOO_LONG;
 
 	ret = uvc_create_dir(full_frame_path);
-	if (ret != USBG_SUCCESS)
+	if (ret != USBG_SUCCESS)buffer_size =
 		return ret;
 
 	ret = usbg_write_dec(frame_path, frame_name, "dwFrameInterval", attrs->dwFrameInterval);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	ret = usbg_write_dec(frame_path, frame_name, "dwMaxVideoFrameBufferSize", attrs->wHeight * attrs->wWidth);
+	if (attrs->dwDefaultFrameInterval != 0) {
+
+	ret = usbg_write_dec(frame_path, frame_name, "dwMaxVideoFrameBufferSize", buffer_size);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
