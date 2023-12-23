@@ -152,6 +152,7 @@ int usbg_write_buf(const char *path, const char *name,
 	FILE *fp;
 	int nmb;
 	int ret = USBG_SUCCESS;
+	int err = 0;
 
 	nmb = snprintf(p, sizeof(p), "%s/%s/%s", path, name, file);
 	if (nmb >= sizeof(p)) {
@@ -159,16 +160,21 @@ int usbg_write_buf(const char *path, const char *name,
 		goto out;
 	}
 
+	err = errno;
+	fprintf(stderr, "CHUCK -->>> 1. Open=%s buf=%s len=%d fp=%p ret=%d err=%d\n", p, buf, len, fp, ret, err);
 	fp = fopen(p, "w");
-	fprintf(stderr, "CHUCK -->>> Open=%s buf=%s len=%d fp=%p ret=%d\n", p, buf, len, fp, ret);
+	err = errno;
+	fprintf(stderr, "CHUCK -->>> 2. Open=%s buf=%s len=%d fp=%p ret=%d err=%d\n", p, buf, len, fp, ret, err);
 	if (!fp) {
 		/* Set error correctly */
 		ret = usbg_translate_error(errno);
 		goto out;
 	}
 
+	fprintf(stderr, "CHUCK -->>> 3. Open=%s buf=%s len=%d nmb=%d fp=%p ret=%d err=%d\n", p, buf, len, nmb, fp, ret, err);
 	nmb = fwrite(buf, sizeof(char), len, fp);
-	fprintf(stderr, "CHUCK -->>> Open=%s buf=%s len=%d nmb=%d fp=%p ret=%d\n", p, buf, len, nmb, fp, ret);
+	err = errno;
+	fprintf(stderr, "CHUCK -->>> 4. Open=%s buf=%s len=%d nmb=%d fp=%p ret=%d err=%d\n", p, buf, len, nmb, fp, ret, err);
 	if (nmb < len) {
 		if (ferror(fp))
 			nmb = usbg_translate_error(errno);
@@ -176,17 +182,17 @@ int usbg_write_buf(const char *path, const char *name,
 			nmb = USBG_ERROR_IO;
 	}
 
-	{
-		int err = 0;
-		ret = fclose(fp);
-		if (ret < 0) {
-			err = errno;
-			ret = usbg_translate_error(err);
-		}
-		else
-			ret = nmb;
-		fprintf(stderr, "CHUCK -->>> Open=%s buf=%s len=%d nmb=%d fp=%p ret=%d err=%d\n\n", p, buf, len, nmb, fp, ret, err);
+	fflush(fp);
+	errno = err = 0;
+	fprintf(stderr, "CHUCK -->>> 5. Open=%s buf=%s len=%d nmb=%d fp=%p ret=%d err=%d\n\n", p, buf, len, nmb, fp, ret, err);
+	ret = fclose(fp);
+	if (ret < 0) {
+		err = errno;
+		ret = usbg_translate_error(err);
 	}
+	else
+		ret = nmb;
+	fprintf(stderr, "CHUCK -->>> 6. Open=%s buf=%s len=%d nmb=%d fp=%p ret=%d err=%d\n\n", p, buf, len, nmb, fp, ret, err);
 out:
 	return ret;
 }

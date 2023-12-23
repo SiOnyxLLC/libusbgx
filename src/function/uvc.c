@@ -1016,15 +1016,20 @@ static int uvc_set_format(char *streaming_path, const char *format, const struct
 	if (nmb >= sizeof(format_path))
 		return USBG_ERROR_PATH_TOO_LONG;
 
+	if (usbg_check_dir(format_path) == USBG_SUCCESS) {
+		ERROR("PATH EXISTS!");
+	}
+
 	ret = uvc_create_dir(format_path);
 	ERROR("Creating dir '%s' ret=%d", format_path, ret);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
+	errno = 0;
 	if (attrs->guidFormat != NULL) {
 		ret = usbg_write_string(streaming_path, format, "guidFormat", attrs->guidFormat);
 	ERROR("Setting guid '%s' ret=%d", attrs->guidFormat, ret);
-		if (ret != USBG_SUCCESS)
+		if (ret < USBG_SUCCESS)
 			return ret;
 	}
 
