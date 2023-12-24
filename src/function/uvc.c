@@ -1023,7 +1023,7 @@ static int uvc_set_format(char *streaming_path, const char *format, const struct
 	}
 
 	if (attrs->guidFormat != NULL) {
-		ret = usbg_write_string(streaming_path, format, "guidFormat", attrs->guidFormat);
+		ret = usbg_write_buf(streaming_path, format, "guidFormat", attrs->guidFormat, 16);
 		if (ret < USBG_SUCCESS)
 			return ret;
 	}
