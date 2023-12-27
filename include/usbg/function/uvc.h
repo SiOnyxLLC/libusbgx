@@ -45,12 +45,14 @@ struct usbg_f_uvc_frame_attrs
 
 struct usbg_f_uvc_format_attrs
 {
-	int bmaControls;
-	int bFormatIndex;
-	int bDefaultFrameIndex;
 	int bAspectRatioX;
 	int bAspectRatioY;
+	int bBitsPerPixel;
+	int bFormatIndex;
+	int bDefaultFrameIndex;
+	int bmaControls;
 	int bmInterfaceFlags;
+	const char *guidFormat;
 	const char *format;
 	struct usbg_f_uvc_frame_attrs **frames;
 };
@@ -91,6 +93,8 @@ enum usbg_f_uvc_format_attr {
 	USBG_F_UVC_FORMAT_ASPECTRATIO_X,
 	USBG_F_UVC_FORMAT_DEFAULT_FRAME_INDEX,
 	USBG_F_UVC_FORMAT_FORMAT_INDEX,
+	USBG_F_UVC_FORMAT_BITS_PER_PIXEL,
+	USBG_F_UVC_FORMAT_GUID_FORMAT,
 	USBG_F_UVC_FORMAT_ATTR_MAX
 };
 
@@ -113,12 +117,14 @@ union usbg_f_uvc_frame_attr_val {
 };
 
 union usbg_f_uvc_format_attr_val {
-	int bmaControls;
-	int bFormatIndex;
-	int bDefaultFrameIndex;
 	int bAspectRatioX;
 	int bAspectRatioY;
+	int bBitsPerPixel;
+	int bFormatIndex;
+	int bDefaultFrameIndex;
+	int bmaControls;
 	int bmInterfaceFlags;
+	const char * guidFormat;
 };
 
 /**

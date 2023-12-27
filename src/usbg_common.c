@@ -174,6 +174,8 @@ int usbg_write_buf(const char *path, const char *name,
 			nmb = USBG_ERROR_IO;
 	}
 
+	fflush(fp);
+
 	ret = fclose(fp);
 	if (ret < 0)
 		ret = usbg_translate_error(errno);
