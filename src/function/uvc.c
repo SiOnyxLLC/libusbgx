@@ -173,6 +173,8 @@ struct {
 #undef UVC_DEC_ATTR
 #undef UVC_DEC_ATTR_RO
 
+static int uvc_set_control(char *func_path, const struct usbg_f_uvc_control_attrs *attrs);
+
 static inline int frame_select(const struct dirent *dent)
 {
 	int ret;
@@ -558,7 +560,7 @@ static int uvc_link(char *path, char *to, char *from)
 	return ret;
 }
 
-static int uvc_set_class(usbg_f_uvc *uvcf, char *cs)
+static int uvc_set_control_class(usbg_f_uvc *uvcf, char *cs, const struct usbg_f_uvc_control_attrs *attrs)
 {
 	char path[USBG_MAX_PATH_LENGTH];
 	char header_path[USBG_MAX_PATH_LENGTH];
@@ -577,36 +579,63 @@ static int uvc_set_class(usbg_f_uvc *uvcf, char *cs)
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	if (!strncmp(cs, UVC_PATH_STREAMING, strlen(UVC_PATH_STREAMING))) {
-		char check_path[USBG_MAX_PATH_LENGTH];
-		struct stat buffer;
+	ret = uvc_set_control(path, attrs);
+	if (ret != USBG_SUCCESS)
+		return ret;
 
-		nmb = snprintf(check_path, sizeof(check_path), "%s/" UVC_PATH_STREAMING_UNCOMPRESSED, path);
-		if (nmb >= sizeof(check_path))
-			return USBG_ERROR_PATH_TOO_LONG;
+	ret = uvc_link(path, UVC_PATH_HEADER, UVC_PATH_CLASS_FS);
+	if (ret)
+		return ret;
 
-		ret = stat(check_path, &buffer);
-		if (!ret) {
-			ret = uvc_link(path, UVC_PATH_STREAMING_UNCOMPRESSED, "header/h/u");
-			if (ret != USBG_SUCCESS)
-				return ret;
-		}
+	return uvc_link(path, UVC_PATH_HEADER, UVC_PATH_CLASS_SS);
+}
 
-		nmb = snprintf(check_path, sizeof(check_path), "%s/" UVC_PATH_STREAMING_MJPEG, path);
-		if (nmb >= sizeof(check_path))
-			return USBG_ERROR_PATH_TOO_LONG;
+static int uvc_set_streaming_class(usbg_f_uvc *uvcf, char *cs)
+{
+	char path[USBG_MAX_PATH_LENGTH];
+	char header_path[USBG_MAX_PATH_LENGTH];
+	char check_path[USBG_MAX_PATH_LENGTH];
+	struct stat buffer;
+	int nmb;
+	int ret;
 
-		ret = stat(check_path, &buffer);
-		if (!ret) {
-			ret = uvc_link(path, UVC_PATH_STREAMING_MJPEG, "header/h/m");
-			if (ret != USBG_SUCCESS)
-				return ret;
-		}
+	nmb = snprintf(path, sizeof(path), "%s/%s/%s", uvcf->func.path, uvcf->func.name, cs);
+	if (nmb >= sizeof(path))
+		return USBG_ERROR_PATH_TOO_LONG;
 
-		ret = uvc_link(path, UVC_PATH_HEADER, UVC_PATH_CLASS_HS);
-		if (ret)
+	nmb = snprintf(header_path, sizeof(header_path), "%s/" UVC_PATH_HEADER, path);
+	if (nmb >= sizeof(header_path))
+		return USBG_ERROR_PATH_TOO_LONG;
+
+	ret = uvc_create_dir(header_path);
+	if (ret != USBG_SUCCESS)
+		return ret;
+
+	nmb = snprintf(check_path, sizeof(check_path), "%s/" UVC_PATH_STREAMING_UNCOMPRESSED, path);
+	if (nmb >= sizeof(check_path))
+		return USBG_ERROR_PATH_TOO_LONG;
+
+	ret = stat(check_path, &buffer);
+	if (!ret) {
+		ret = uvc_link(path, UVC_PATH_STREAMING_UNCOMPRESSED, "header/h/u");
+		if (ret != USBG_SUCCESS)
 			return ret;
 	}
+
+	nmb = snprintf(check_path, sizeof(check_path), "%s/" UVC_PATH_STREAMING_MJPEG, path);
+	if (nmb >= sizeof(check_path))
+		return USBG_ERROR_PATH_TOO_LONG;
+
+	ret = stat(check_path, &buffer);
+	if (!ret) {
+		ret = uvc_link(path, UVC_PATH_STREAMING_MJPEG, "header/h/m");
+		if (ret != USBG_SUCCESS)
+			return ret;
+	}
+
+	ret = uvc_link(path, UVC_PATH_HEADER, UVC_PATH_CLASS_HS);
+	if (ret)
+		return ret;
 
 	ret = uvc_link(path, UVC_PATH_HEADER, UVC_PATH_CLASS_FS);
 	if (ret)
@@ -849,11 +878,11 @@ static int uvc_libconfig_import(struct usbg_function *f, config_setting_t *root)
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	ret = uvc_set_class(uvcf, UVC_PATH_CONTROL);
+	ret = uvc_set_control_class(uvcf, UVC_PATH_CONTROL, NULL);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	ret = uvc_set_class(uvcf, UVC_PATH_STREAMING);
+	ret = uvc_set_streaming_class(uvcf, UVC_PATH_STREAMING);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
@@ -1118,6 +1147,23 @@ static int uvc_set_streaming(char *func_path, const char *format, const struct u
 	return ret;
 }
 
+static int uvc_set_control(char *control_path, const struct usbg_f_uvc_control_attrs *attrs)
+{
+	char  headers_path[USBG_MAX_PATH_LENGTH];
+	int   nmb = 0;
+	int   ret = 0;
+
+	if (attrs && (attrs->bcdUVC != 0) && (attrs->bcdUVC < 0xFFFF)) {
+		nmb = snprintf(headers_path, sizeof(headers_path), "%s/header", control_path);
+		if (nmb >= sizeof(headers_path))
+			return USBG_ERROR_PATH_TOO_LONG;
+
+		return usbg_write_dec(headers_path, "h", "bcdUVC", attrs->bcdUVC);
+	}
+
+	return USBG_SUCCESS;
+}
+
 static int dir_nftw_cb(const char *pathname, const struct stat *sbuf, int type, struct FTW *ftwb)
 {
 	(void) sbuf;
@@ -1265,11 +1311,11 @@ int usbg_f_uvc_set_attrs(usbg_f_uvc *uvcf, const struct usbg_f_uvc_attrs *attrs)
 			ERROR("Error: %d", ret);
 	}
 
-	ret = uvc_set_class(uvcf, UVC_PATH_CONTROL);
+	ret = uvc_set_control_class(uvcf, UVC_PATH_CONTROL, &attrs->controls);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	ret = uvc_set_class(uvcf, UVC_PATH_STREAMING);
+	ret = uvc_set_streaming_class(uvcf, UVC_PATH_STREAMING);
 	if (ret != USBG_SUCCESS)
 		return ret;
 

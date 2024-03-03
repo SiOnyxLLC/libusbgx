@@ -57,8 +57,14 @@ struct usbg_f_uvc_format_attrs
 	struct usbg_f_uvc_frame_attrs **frames;
 };
 
+struct usbg_f_uvc_control_attrs
+{
+	uint32_t bcdUVC;
+};
+
 struct usbg_f_uvc_attrs
 {
+	struct usbg_f_uvc_control_attrs controls;
 	struct usbg_f_uvc_format_attrs **formats;
 };
 
