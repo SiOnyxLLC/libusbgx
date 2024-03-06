@@ -1272,11 +1272,9 @@ static int uvc_set_frame_framebased(char *streaming_path, const char *format, co
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-#if 0
 	ret = usbg_write_dec(format_path, frame_name, "dwBytesPerLine", attrs->dwBytesPerLine);
 	if (ret != USBG_SUCCESS)
 		return ret;
-#endif // 0
 
 	ret = usbg_write_dec(format_path, frame_name, "dwDefaultFrameInterval", attrs->dwFrameInterval);
 	if (ret != USBG_SUCCESS)
@@ -1330,13 +1328,13 @@ static int uvc_set_streaming(char *func_path, const char *format, const struct u
 
 	ret = uvc_set_format(streaming_path, format, attrs);
 	if(ret != USBG_SUCCESS)
-		ERROR("Format Error: %d", ret);
+		ERROR("Format '%s' Error: %d", format, ret);
 
 	for(frame_attrs = attrs->frames, i = 0; frame_attrs[i]; ++i) {
 		if (frame_attrs[i]) {
 			ret = uvc_set_frame(streaming_path, format, frame_attrs[i]);
 			if(ret != USBG_SUCCESS)
-				ERROR("Frame Error: %d", ret);
+				ERROR("Format '%s' Frame %d Error: %d", format, i, ret);
 		}
 	}
 
