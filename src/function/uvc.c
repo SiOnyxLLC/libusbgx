@@ -1272,9 +1272,9 @@ static int uvc_set_frame_framebased(char *streaming_path, const char *format, co
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	ret = usbg_write_dec(format_path, frame_name, "dwBytesPerLine", attrs->dwBytesPerLine);
-	if (ret != USBG_SUCCESS)
-		return ret;
+	// ret = usbg_write_dec(format_path, frame_name, "dwBytesPerLine", attrs->dwBytesPerLine);
+	// if (ret != USBG_SUCCESS)
+	// 	return ret;
 
 	ret = usbg_write_dec(format_path, frame_name, "dwDefaultFrameInterval", attrs->dwDefaultFrameInterval);
 	if (ret != USBG_SUCCESS)
