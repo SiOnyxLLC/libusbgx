@@ -36,6 +36,7 @@ struct usbg_f_uvc_frame_attrs
 	int bmCapabilities;
 	int dwMinBitRate;
 	int dwMaxBitRate;
+	int dwBytesPerLine;
 	int dwMaxVideoFrameBufferSize;
 	int dwDefaultFrameInterval;
 	int dwFrameInterval;
