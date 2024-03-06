@@ -1120,15 +1120,15 @@ static int uvc_set_format_framebased(char *streaming_path, const char *format, c
 
 static int uvc_set_format(char *streaming_path, const char *format, const struct usbg_f_uvc_format_attrs *attrs)
 {
-	if (strcasestr("format", "uncompressed")) {
+	if (strcasestr(format, "uncompressed")) {
 		return uvc_set_format_uncompressed(streaming_path, format, attrs);
 	}
 
-	if (strcasestr("format", "mjpeg")) {
+	if (strcasestr(format, "mjpeg")) {
 		return uvc_set_format_mjpeg(streaming_path, format, attrs);
 	}
 
-	if (strcasestr("format", "framebased")) {
+	if (strcasestr(format, "framebased")) {
 		return uvc_set_format_framebased(streaming_path, format, attrs);
 	}
 
@@ -1163,7 +1163,7 @@ static int uvc_set_frame_uncompressed(char *streaming_path, const char *format, 
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	ret = usbg_write_dec(format_path, frame_name, "dwDefaultFrameInterval", attrs->dwFrameInterval);
+	ret = usbg_write_dec(format_path, frame_name, "dwDefaultFrameInterval", attrs->dwDefaultFrameInterval);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
@@ -1218,7 +1218,7 @@ static int uvc_set_frame_mjpeg(char *streaming_path, const char *format, const s
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	ret = usbg_write_dec(format_path, frame_name, "dwDefaultFrameInterval", attrs->dwFrameInterval);
+	ret = usbg_write_dec(format_path, frame_name, "dwDefaultFrameInterval", attrs->dwDefaultFrameInterval);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
@@ -1276,7 +1276,7 @@ static int uvc_set_frame_framebased(char *streaming_path, const char *format, co
 	if (ret != USBG_SUCCESS)
 		return ret;
 
-	ret = usbg_write_dec(format_path, frame_name, "dwDefaultFrameInterval", attrs->dwFrameInterval);
+	ret = usbg_write_dec(format_path, frame_name, "dwDefaultFrameInterval", attrs->dwDefaultFrameInterval);
 	if (ret != USBG_SUCCESS)
 		return ret;
 
@@ -1301,15 +1301,15 @@ static int uvc_set_frame_framebased(char *streaming_path, const char *format, co
 
 static int uvc_set_frame(char *streaming_path, const char *format, const struct usbg_f_uvc_frame_attrs *attrs)
 {
-	if (strcasestr("format", "uncompressed")) {
+	if (strcasestr(format, "uncompressed")) {
 		return uvc_set_frame_uncompressed(streaming_path, format, attrs);
 	}
 
-	if (strcasestr("format", "mjpeg")) {
+	if (strcasestr(format, "mjpeg")) {
 		return uvc_set_frame_mjpeg(streaming_path, format, attrs);
 	}
 
-	if (strcasestr("format", "framebased")) {
+	if (strcasestr(format, "framebased")) {
 		return uvc_set_frame_framebased(streaming_path, format, attrs);
 	}
 
