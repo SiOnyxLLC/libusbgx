@@ -31,11 +31,13 @@
 #define UVC_PATH_STREAMING		"streaming"
 #define UVC_PATH_STREAMING_UNCOMPRESSED	"uncompressed/u"
 #define UVC_PATH_STREAMING_MJPEG	"mjpeg/m"
+#define UVC_PATH_STREAMING_FRAMEBASED	"framebase/fb"
 
 #define MAX_FRAMES 16
-#define MAX_FORMATS 2
+#define MAX_FORMATS 3
 
 const char * format_names[MAX_FORMATS] = {
+	UVC_PATH_STREAMING_FRAMEBASED,
 	UVC_PATH_STREAMING_MJPEG,
 	UVC_PATH_STREAMING_UNCOMPRESSED,
 };
@@ -629,6 +631,17 @@ static int uvc_set_streaming_class(usbg_f_uvc *uvcf, char *cs)
 	ret = stat(check_path, &buffer);
 	if (!ret) {
 		ret = uvc_link(path, UVC_PATH_STREAMING_MJPEG, "header/h/m");
+		if (ret != USBG_SUCCESS)
+			return ret;
+	}
+
+	nmb = snprintf(check_path, sizeof(check_path), "%s/" UVC_PATH_STREAMING_FRAMEBASED, path);
+	if (nmb >= sizeof(check_path))
+		return USBG_ERROR_PATH_TOO_LONG;
+
+	ret = stat(check_path, &buffer);
+	if (!ret) {
+		ret = uvc_link(path, UVC_PATH_STREAMING_FRAMEBASED, "header/h/fb");
 		if (ret != USBG_SUCCESS)
 			return ret;
 	}
