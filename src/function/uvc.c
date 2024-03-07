@@ -31,15 +31,15 @@
 #define UVC_PATH_STREAMING		"streaming"
 #define UVC_PATH_STREAMING_UNCOMPRESSED	"uncompressed/u"
 #define UVC_PATH_STREAMING_MJPEG	"mjpeg/m"
-#define UVC_PATH_STREAMING_FRAMEBASED	"framebase/fb"
+#define UVC_PATH_STREAMING_FRAMEBASED	"framebased/fb"
 
 #define MAX_FRAMES 16
 #define MAX_FORMATS 3
 
 const char * format_names[MAX_FORMATS] = {
-	UVC_PATH_STREAMING_FRAMEBASED,
-	UVC_PATH_STREAMING_MJPEG,
 	UVC_PATH_STREAMING_UNCOMPRESSED,
+	UVC_PATH_STREAMING_MJPEG,
+	UVC_PATH_STREAMING_FRAMEBASED,
 };
 
 struct formats {
@@ -54,24 +54,24 @@ struct usbg_f_uvc
 	bool formats_initiated;
 };
 
-#define UVC_DEC_ATTR(_name)						\
-	{								\
-		.name = #_name,						\
-		.offset = offsetof(struct usbg_f_uvc_config_attrs, _name),     \
-		.get = usbg_get_dec,				        \
-		.set = usbg_set_dec,				        \
-		.import = usbg_get_config_node_int,	                \
-		.export = usbg_set_config_node_int,		        \
+#define UVC_DEC_ATTR(_name)							\
+	{									\
+		.name = #_name,							\
+		.offset = offsetof(struct usbg_f_uvc_config_attrs, _name),	\
+		.get = usbg_get_dec,						\
+		.set = usbg_set_dec,						\
+		.import = usbg_get_config_node_int,				\
+		.export = usbg_set_config_node_int,				\
 	}
 
-#define UVC_STRING_ATTR(_name)					\
-	{								\
-		.name = #_name,						\
-		.offset = offsetof(struct usbg_f_uvc_config_attrs, _name),     \
-		.get = usbg_get_string,				        \
-		.set = usbg_set_string,				        \
-		.export = usbg_set_config_node_string,		        \
-		.import = usbg_get_config_node_string,	                \
+#define UVC_STRING_ATTR(_name)							\
+	{									\
+		.name = #_name,							\
+		.offset = offsetof(struct usbg_f_uvc_config_attrs, _name),	\
+		.get = usbg_get_string,						\
+		.set = usbg_set_string,						\
+		.export = usbg_set_config_node_string,				\
+		.import = usbg_get_config_node_string,				\
 	}
 
 struct {
@@ -90,26 +90,26 @@ struct {
 
 #undef UVC_DEC_ATTR
 
-#define UVC_DEC_ATTR(_name)						\
-	{								\
-		.name = #_name,						\
-		.offset = offsetof(struct usbg_f_uvc_frame_attrs, _name),     \
-		.get = usbg_get_dec,				        \
-		.set = usbg_set_dec,				        \
-		.import = usbg_get_config_node_int,	                \
-		.export = usbg_set_config_node_int,		        \
+#define UVC_DEC_ATTR(_name)							\
+	{									\
+		.name = #_name,							\
+		.offset = offsetof(struct usbg_f_uvc_frame_attrs, _name),	\
+		.get = usbg_get_dec,						\
+		.set = usbg_set_dec,						\
+		.import = usbg_get_config_node_int,				\
+		.export = usbg_set_config_node_int,				\
 	}
 
 #undef UVC_STRING_ATTR
 
-#define UVC_STRING_ATTR(_name)					\
-	{								\
-		.name = #_name,						\
-		.offset = offsetof(struct usbg_f_uvc_format_attrs, _name),     \
-		.get = usbg_get_string,				        \
-		.set = usbg_set_string,				        \
-		.export = usbg_set_config_node_string,		        \
-		.import = usbg_get_config_node_string,	                \
+#define UVC_STRING_ATTR(_name)							\
+	{									\
+		.name = #_name,							\
+		.offset = offsetof(struct usbg_f_uvc_format_attrs, _name),	\
+		.get = usbg_get_string,						\
+		.set = usbg_set_string,						\
+		.export = usbg_set_config_node_string,				\
+		.import = usbg_get_config_node_string,				\
 	}
 
 struct {
@@ -133,23 +133,23 @@ struct {
 
 #undef UVC_DEC_ATTR
 
-#define UVC_DEC_ATTR(_name)						\
-	{								\
-		.name = #_name,						\
-		.offset = offsetof(struct usbg_f_uvc_format_attrs, _name),     \
-		.get = usbg_get_dec,				        \
-		.set = usbg_set_dec,				        \
-		.import = usbg_get_config_node_int,	                \
-		.export = usbg_set_config_node_int,		        \
+#define UVC_DEC_ATTR(_name)							\
+	{									\
+		.name = #_name,							\
+		.offset = offsetof(struct usbg_f_uvc_format_attrs, _name),	\
+		.get = usbg_get_dec,						\
+		.set = usbg_set_dec,						\
+		.import = usbg_get_config_node_int,				\
+		.export = usbg_set_config_node_int,				\
 	}
 
-#define UVC_DEC_ATTR_RO(_name)						\
-	{								\
-		.name = #_name,						\
-		.ro = true,						\
-		.offset = offsetof(struct usbg_f_uvc_format_attrs, _name),     \
-		.get = usbg_get_dec,				        \
-		.export = usbg_set_config_node_int,		        \
+#define UVC_DEC_ATTR_RO(_name)							\
+	{									\
+		.name = #_name,							\
+		.ro = true,							\
+		.offset = offsetof(struct usbg_f_uvc_format_attrs, _name),	\
+		.get = usbg_get_dec,						\
+		.export = usbg_set_config_node_int,				\
 	}
 
 struct {
