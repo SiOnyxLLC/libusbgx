@@ -1064,18 +1064,6 @@ static int uvc_set_format_uncompressed(char *streaming_path, const char *format,
 			return ret;
 	}
 
-	if (attrs->bAspectRatioX != 0) {
-		ret = usbg_write_dec(streaming_path, format, "bAspectRatioX", attrs->bAspectRatioX);
-		if (ret != USBG_SUCCESS)
-			return ret;
-	}
-
-	if (attrs->bAspectRatioY != 0) {
-		ret = usbg_write_dec(streaming_path, format, "bAspectRatioY", attrs->bAspectRatioY);
-		if (ret != USBG_SUCCESS)
-			return ret;
-	}
-
 	if (attrs->guidFormat != NULL) {
 		ret = usbg_write_buf(streaming_path, format, "guidFormat", attrs->guidFormat, 16);
 		if ((ret < USBG_SUCCESS) && (ret != USBG_ERROR_NO_ACCESS)) {
@@ -1108,18 +1096,6 @@ static int uvc_set_format_mjpeg(char *streaming_path, const char *format, const 
 			return ret;
 	}
 
-	if (attrs->bAspectRatioX != 0) {
-		ret = usbg_write_dec(streaming_path, format, "bAspectRatioX", attrs->bAspectRatioX);
-		if (ret != USBG_SUCCESS)
-			return ret;
-	}
-
-	if (attrs->bAspectRatioY != 0) {
-		ret = usbg_write_dec(streaming_path, format, "bAspectRatioY", attrs->bAspectRatioY);
-		if (ret != USBG_SUCCESS)
-			return ret;
-	}
-
 	return usbg_write_dec(streaming_path, format, "bDefaultFrameIndex", attrs->bDefaultFrameIndex);
 }
 
@@ -1139,18 +1115,6 @@ static int uvc_set_format_framebased(char *streaming_path, const char *format, c
 			return ret;
 	}
 
-	if (attrs->bAspectRatioX != 0) {
-		ret = usbg_write_dec(streaming_path, format, "bAspectRatioX", attrs->bAspectRatioX);
-		if (ret != USBG_SUCCESS)
-			return ret;
-	}
-
-	if (attrs->bAspectRatioY != 0) {
-		ret = usbg_write_dec(streaming_path, format, "bAspectRatioY", attrs->bAspectRatioY);
-		if (ret != USBG_SUCCESS)
-			return ret;
-	}
-
 	if (attrs->guidFormat != NULL) {
 		ret = usbg_write_buf(streaming_path, format, "guidFormat", attrs->guidFormat, 16);
 		if ((ret < USBG_SUCCESS) && (ret != USBG_ERROR_NO_ACCESS)) {
@@ -1158,11 +1122,13 @@ static int uvc_set_format_framebased(char *streaming_path, const char *format, c
 		}
 	}
 
+#if 0
 	if (attrs->bBitsPerPixel != 0) {
 		ret = usbg_write_dec(streaming_path, format, "bBitsPerPixel", attrs->bBitsPerPixel);
 		if (ret != USBG_SUCCESS)
 			return ret;
 	}
+#endif // 0
 
 	return usbg_write_dec(streaming_path, format, "bDefaultFrameIndex", attrs->bDefaultFrameIndex);
 }
